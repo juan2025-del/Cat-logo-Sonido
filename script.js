@@ -1,23 +1,34 @@
+const urlConsulta = "https://opensheet.elk.sh/13C3PithGPmHtzHvZcIL_w4-n0CgFkZ_zgRyhUoc-g40/Hoja1";
 
-function consultarAlaApi() {
+let mensajeResultado = document.getElementById("mensajeResultado");
+let contenedor = document.getElementById("contenedorProductos");
 
-  let urlConsulta = "https://opensheet.elk.sh/13C3PithGPmHtzHvZcIL_w4-n0CgFkZ_zgRyhUoc-g40/Hoja1";
+// ===== CARGAR DATOS =====
+fetch(urlConsulta)
+  .then(res => res.json())
+  .then(datos => {
+    mensajeResultado.innerHTML = "";
+    mostrarProductos(datos);
+  })
+  .catch(error => {
+    mensajeResultado.innerHTML = "Error al cargar los datos 😢";
+    console.error("ERROR:", error);
+  });
 
-  let mensajeResultado = document.getElementById("mensajeResultado");
+// ===== DIBUJAR PRODUCTOS =====
+function mostrarProductos(lista) {
+  lista.forEach(prod => {
+    let tarjeta = document.createElement("div");
+    tarjeta.className = "card";
 
-  mensajeResultado.innerHTML = "Cargando...";
+    tarjeta.innerHTML = `
+      <img src="${prod.imagen}" alt="${prod.nombre}">
+      <h2>${prod.nombre}</h2>
+      <h4>${prod.marca} - ${prod.categoria}</h4>
+      <p class="descripcion">${prod.descripcion}</p>
+      <p class="precio">S/ ${prod.precio}</p>
+    `;
 
-  fetch(urlConsulta)
-    .then(response => response.json())
-    .then(datos => {
-      console.log("Datos obtenidos:", datos);
-
-      mensajeResultado.innerHTML = "Datos cargados correctamente ✔";
-
-      // Si quieres ver los datos en pantalla luego podemos agregarlo.
-    })
-    .catch(error => {
-      mensajeResultado.innerHTML = "Error al cargar los datos 😢";
-      console.error("Error:", error);
-    });
+    contenedor.appendChild(tarjeta);
+  });
 }
